@@ -6,6 +6,7 @@
 
 Документация проекта
 * Whitepaper - https://filecoin.io/filecoin.pdf
+** Перевод - https://github.com/IlyaDruzhinin/filecoin-docs-ru/blob/master/filecoin-whitepaper-ru.md
 * Proof-of-Replication - https://filecoin.io/proof-of-replication.pdf
 * Power Fault Tolerance - https://filecoin.io/power-fault-tolerance.pdf
 * Research Roadmap 2017 - https://filecoin.io/research-roadmap-2017.pdf
