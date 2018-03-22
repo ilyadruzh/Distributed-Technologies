@@ -17,7 +17,7 @@ Filecoin - это децентрализованная сеть хранения
 (e) Формализует проверяемые рынки и строит два рынка - рынок хранения и рынок восстановления, которые определяют, как данные записываются и считываются из Filecoin, соответственно.
 (f) Обсуждает варианты использования, подключения к другим системам и способы использования протокола.
 
-### Содержание
+#### Содержание
 1 Введение
 1.1 Элементарные компоненты
 1.2 Обзор протокола
@@ -51,7 +51,7 @@ Filecoin - это децентрализованная сеть хранения
 8.2 Открытые вопросы
 8.3 Доказательства и формальная проверка
 
-### Список рисунков
+#### Список рисунков
 Эскиз протокола Filecoin
 Иллюстрация протокола Filecoin
 Иллюстрация основного механизма PoSt.Prove
@@ -67,3 +67,27 @@ Filecoin - это децентрализованная сеть хранения
 Выборы лидеров в протоколе ожидаемого согласия
 
 Закончил на 3-ей странице
+
+### 1.Introduction
+Filecoin is a protocol token whose blockchain runs on a novel proof, called Proof-of-Spacetime, where blocks are created by miners that are storing data. Filecoin protocol provides a data storage and retrieval service via a network of independent storage providers that does not rely on a single coordinator, where: (1) clients pay to store and retrieve data, (2) Storage Miners earn tokens by offering storage (3) Retrieval Miners earn tokens by serving data.
+
+#### 1.1 Elementary Components
+The Filecoin protocol builds upon four novel components.
+
+1. Decentralized Storage Network (DSN): We provide an abstraction for network of independent storage providers to offer storage and retrieval services (in Section 2). Later, we present the Filecoin protocol as an incentivized, auditable and verifiable DSN construction (in Section 4).
+2. Novel Proofs-of-Storage: We present two novel Proofs-of-Storage (in Section 3): (1) Proof-of-Replication allows storage providers to prove that data has been replicated to its own uniquely dedicated physical storage. Enforcing unique physical copies enables a verifier to check that a prover is not deduplicating multiple copies of the data into the same storage space; (2) Proof-of-Spacetime allows
+storage providers to prove they have stored some data throughout a specified amount of time.
+3. Verifiable Markets: We model storage requests and retrieval requests as orders in two decentralized verifiable markets operated by the Filecoin network (in Section 5). Verifiable markets ensure that payments are performed when a service has been correctly provided. We present the Storage Market and the Retrieval Market where miners and clients can respectively submit storage and retrieval orders.
+4. Useful Proof-of-Work : We show how to construct a useful Proof-of-Work based on Proof-of-Spacetime that can be used in consensus protocols. Miners do not need to spend wasteful computation to mine blocks, but instead must store data in the network.
+
+#### 1.2 Protocol Overview
+• The Filecoin protocol is a Decentralized Storage Network construction built on a blockchain and with a native token. Clients spend tokens for storing and retrieving data and miners earn tokens by storing and serving data.
+• The Filecoin DSN handle storage and retrieval requests respectively via two verifiable markets: the Storage Market and the Retrieval Market. Clients and miners set the prices for the services requested and offered and submit their orders to the markets.
+• The markets are operated by the Filecoin network which employs Proof-of-Spacetime and Proof-of-Replication to guarantee that miners have correctly stored the data they committed to store.
+• Finally, miners can participate in the creations of new blocks for the underlining blockchain. The influence of a miner over the next block is proportional to the amount of their storage currently in use in the network.
+
+A sketch of the Filecoin protocol, using nomenclature defined later within the paper, is shown in Figure 1 accompanied with an illustration in Figure 2.
+
+#### 1.3 Paper organization
+The remainder of this paper is organized as follows. We present our definition of and requirements for a theoretical DSNscheme in Section 2. In Section 3 we motivate, define, and present our Proof-of-Replication and Proof-of-Spacetime protocols, used within Filecoin to cryptographically verify that data is continuously 4stored in accordance with deals made. Section 4 describes the concrete instantiation of the Filecoin DSN, describing data structures, protocols, and the interactions between participants. Section 5 defines and describes the concept of Verifiable Markets, as well as their implementations, the Storage Market and Retrieval Market. Section 6 motivates and describes the use of the Proof-of-Spacetime protocol for demonstrating and evaluating a miner’s contribution to the network, which is necessary to extend the blockchain and assign the block reward. Section 7 provides a brief description of Smart Contracts within the Filecoin We conclude
+with a discussion of future work in Section 8.
