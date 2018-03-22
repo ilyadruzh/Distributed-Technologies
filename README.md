@@ -13,3 +13,6 @@
 
 В данном репозитории будет происходить последовательный перевод основной документации, с отсылками к документации из репозиториев:
 https://github.com/IlyaDruzhinin/ipfs-docs-ru и https://github.com/IlyaDruzhinin/distributed-storage-docs-ru
+
+## Структура репозитория
+- Перевод белой бумаги - https://github.com/IlyaDruzhinin/filecoin-docs-ru/blob/master/filecoin-whitepaper-ru.md
