@@ -94,3 +94,54 @@ A sketch of the Filecoin protocol, using nomenclature defined later within the p
 
 #### 1.3 Организация документа
 The remainder of this paper is organized as follows. We present our definition of and requirements for a theoretical DSNscheme in Section 2. In Section 3 we motivate, define, and present our Proof-of-Replication and Proof-of-Spacetime protocols, used within Filecoin to cryptographically verify that data is continuously 4stored in accordance with deals made. Section 4 describes the concrete instantiation of the Filecoin DSN, describing data structures, protocols, and the interactions between participants. Section 5 defines and describes the concept of Verifiable Markets, as well as their implementations, the Storage Market and Retrieval Market. Section 6 motivates and describes the use of the Proof-of-Spacetime protocol for demonstrating and evaluating a miner’s contribution to the network, which is necessary to extend the blockchain and assign the block reward. Section 7 provides a brief description of Smart Contracts within the Filecoin We conclude with a discussion of future work in Section 8.
+
+{ здесь Рисунок 1 }
+Эскиз протокола Filecoin
+
+{ здесь Рисунок 2 } 
+Илюстрация протокола Filecoin, которая показывает взаимодействие Клиента и Майнера. The Storage and Retrieval Markets shown above and below the blockchain, respectively, with time advancing from the Order Matching phase on the left to the Settlement phase on the right. Обратите внимание, микроплатежи могут быть сделаны для извлечения, клиент должен заблокировать средства по микротранзакциям
+
+### 2 Definition of a Decentralized Storage Network
+We introduce the notion of a Decentralized Storage Network (DSN) scheme. DSNs aggregate storage offered by multiple independent storage providers and self-coordinate to provide data storage and data retrieval to clients. Coordination is decentralized and does not require trusted parties: the secure operation of theses systems is achieved through protocols that coordinate and verify operations carried out by individual parties.
+DSNs can employ different strategies for coordination, including Byzantine Agreement, gossip protocols, or CRDTs, depending on the requirements of the system. Later, in Section 4, we provide a construction for the Filecoin DSN.
+
+Definition 2.1. A DSN scheme Π is a tuple of protocols run by storage providers and clients: (Put, Get, Manage)
+* Put(data) → key: Clients execute the Put protocol to store data under a unique identifier key.
+* Get(key) → data: Clients execute the Get protocol to retrieve data that is currently stored using key.
+* Manage(): The network of participants coordinates via the Manage protocol to: control the available storage, audit the service offered by providers and repair possible faults. The Manage protocol is run by storage providers often in conjunction with clients or a network of auditors. (In the case where the Manage protocol relies on a blockchain, we consider the miners as auditors, since they verify and coordinate storage providers)
+
+A DSN scheme Π must guarantee data integrity and retrievability as well as tolerate management and storage faults defined in the following sections.
+
+#### 2.1 Fault tolerance
+##### 2.1.1 Management faults
+We define management faults to be byzantine faults caused by participants in the Manage protocol. A DSN scheme relies on the fault tolerance of its underlining Manage protocol. Violations on the faults tolerance assumptions for management faults can compromise liveness and safety of the system.
+
+For example, consider a DSN scheme Π, where the Manage protocol requires Byzantine Agreement (BA) to audit storage providers. In such protocol, the network receives proofs of storage from storage providers and runs BA to agree on the validity of these proofs. If the BA tolerates up to f faults out of n total
+nodes, then our DSN can tolerate f < n/2 faulty nodes. On violations of these assumptions, audits can be compromised.
+
+##### 2.1.2 Storage faults
+We define storage faults to be byzantine faults that prevent clients from retrieving the data: i.e. Storage Miners lose their pieces, Retrieval Miners stop serving pieces. A successful Put execution is (f, m)-tolerant if it results in its input data being stored in m independent storage providers (out of n total) and it can tolerate up to f byzantine providers. The parameters f and m depend on protocol implementation; protocol designers can fix f and m or leave the choice to the user, extending Put(data) into Put(data, f , m). A Get execution on stored data is successful if there are fewer than f faulty storage providers.
+
+For example, consider a simple scheme, where the Put protocol is designed such that each storage provider stores all of the data. In this scheme m = n and f = m − 1. Is it always f = m − 1? No, some schemes can be designed using erasure coding, where each storage providers store a special portion of the data, such that x out of m storage providers are required to retrieve the data; in this case f = m − x.
+
+#### 2.2 Properties
+We describe the two required properties for a DSN scheme and then present additional properties required by the Filecoin DSN.
+
+##### 2.2.1 Data Integrity
+This property requires that no bounded adversary A can convince clients to accept altered or falsified data at the end of a Get execution.
+
+Definition 2.2. A DSN scheme Π provides data integrity if: for any successful Put execution for some data d under key k, there is no computationally-bounded adversary A that can convince a client to accept d 0 , for d 0 6 = d at the end of a Get execution for identifier k.
+
+##### 2.2.2 Retrievability
+This property captures the requirement that, given our fault-tolerance assumptions of Π, if some data has been successfully stored in Π and storage providers continue to follow the protocol, then clients can eventually retrieve the data.
+
+Definition 2.3. A DSN scheme Π provides retrievability if: for any successful Put execution for data under key, there exists a successful Get execution for key for which a client retrieves data.(This definition does not guarantee every Get to succeed: if every Get eventually returns data, then the scheme is fair.)
+
+##### 2.2.3 Other Properties
+DSNs can provide other properties specific to their application. We define three key properties required by the Filecoin DSN: public verifiability, auditability, and incentive-compatibility.
+
+Definition 2.4. A DSN scheme Π is publicly verifiable if: for each successful Put, the network of storage providers can generate a proof that the data is currently being stored. The Proof-of-Storage must convince any efficient verifier, which only knows key and does not have access to data.
+
+Definition 2.5. A DSN scheme Π is auditable, if it generates a verifiable trace of operation that can be checked in the future to confirm storage was indeed stored for the right duration of time.
+
+Definition 2.6. A DSN scheme Π is incentive-compatible, if: storage providers are rewarded for successfully offering storage and retrieval service, or penalized for misbehaving, such that the storage providers’ dominant strategy is to store data.
