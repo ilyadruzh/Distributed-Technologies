@@ -3,6 +3,8 @@
 
 ## Inroduction
 
+GoogleDrive with awesome pdf (later)
+
 ## Support
 - ETH address for donations: [0x0071a7250ba11e086b0de4afc6e0264061d8c941](https://etherscan.io/address/0x0071a7250ba11e086b0de4afc6e0264061d8c941)
 
@@ -16,3 +18,7 @@
 - Instagram: 
 - YouTube (russian): 
 - YouTube (english):
+
+## Links for research 
+- Blockchain in [SemanticScholar](https://www.semanticscholar.org/search?year%5B0%5D=2008&year%5B1%5D=2018&q=blockchain&sort=year)
+- Blockchain in [arXiv.org](https://arxiv.org/search/?query=blockchain&searchtype=all&source=header)
