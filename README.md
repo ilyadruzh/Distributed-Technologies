@@ -13,8 +13,18 @@ GoogleDrive with awesome pdf (later)
 - [Blockchain at Berkley](https://blockchain.berkeley.edu/)
 - [HSE. Создание проектов на популярных блокчейн-платформах. (Russian)](https://busedu.hse.ru/catalog/210535865.html)
 - [ETH Zurich. Distributed Computing Group](https://disco.ethz.ch/courses)
+- [Coursera: Cryptography I](https://www.coursera.org/learn/crypto)
+- [Coursera: Cryptography II](https://www.coursera.org/learn/crypto2)
 
-## Contacts
+## YouTube
+- [YouTube: SF Bitcoin Developers](https://www.youtube.com/channel/UCREs0ConyCR2sEFf-DrLRMw)
+- [YouTube: Blockchain at Berkeley](https://www.youtube.com/channel/UC5sgoRfoSp3jeX4DEqKLwKg)
+
+## Communities
+- Telegram [Distributed Technologies group (russian)](https://t.me/distributed)
+- Telegram [Distributed Technologies group (english)](https://t.me/joinchat/AAAAAD_Rz-YN11ddwxOkDQ)
+
+## My Contacts
 - Telegram group (russian): [TechGarageRu](https://t.me/techgarageru)
 - Telegram channel: [ProtocolX](http://t.me/protocolx)
 - My Telegram: [@IlyaDruzhinin](https://t.me/IlyaDruzhinin)
