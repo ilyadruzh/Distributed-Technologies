@@ -3,6 +3,8 @@
 
 ## Inroduction
 
+My name is Ilya. I'm software developer. Rust is my main programming language. 
+
 GoogleDrive with awesome pdf (later)
 
 ## Support
@@ -29,7 +31,7 @@ GoogleDrive with awesome pdf (later)
 - Telegram channel: [ProtocolX](http://t.me/protocolx)
 - My Telegram: [@IlyaDruzhinin](https://t.me/IlyaDruzhinin)
 - Medium: [@IlyaDruzhinin](https://medium.com/@ilyadruzhinin)
-- Facebook:
+- Facebook: 
 - Twitter: [IlyaDruzhinin](https://twitter.com/IlyaDruzhinin)
 - Instagram: 
 - YouTube (russian): 
