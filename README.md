@@ -8,6 +8,11 @@ GoogleDrive with awesome pdf (later)
 ## Support
 - ETH address for donations: [0x0071a7250ba11e086b0de4afc6e0264061d8c941](https://etherscan.io/address/0x0071a7250ba11e086b0de4afc6e0264061d8c941)
 
+## Education
+- [CS 251: Bitcoin and Cryptocurrencies](https://crypto.stanford.edu/cs251/)
+- [Blockchain at Berkley](https://blockchain.berkeley.edu/)
+- [HSE. Создание проектов на популярных блокчейн-платформах. (Russian)](https://busedu.hse.ru/catalog/210535865.html)
+
 ## Contacts
 - Telegram group (russian): [TechGarageRu](https://t.me/techgarageru)
 - Telegram channel: [ProtocolX](http://t.me/protocolx)
