@@ -9,7 +9,7 @@ GoogleDrive with awesome pdf (later)
 - ETH address for donations: [0x0071a7250ba11e086b0de4afc6e0264061d8c941](https://etherscan.io/address/0x0071a7250ba11e086b0de4afc6e0264061d8c941)
 
 ## Education
-- [CS 251: Bitcoin and Cryptocurrencies](https://crypto.stanford.edu/cs251/)
+- [Stanford. CS 251: Bitcoin and Cryptocurrencies](https://crypto.stanford.edu/cs251/)
 - [Blockchain at Berkley](https://blockchain.berkeley.edu/)
 - [HSE. Создание проектов на популярных блокчейн-платформах. (Russian)](https://busedu.hse.ru/catalog/210535865.html)
 
@@ -23,6 +23,7 @@ GoogleDrive with awesome pdf (later)
 - Instagram: 
 - YouTube (russian): 
 - YouTube (english):
+- Patreon: 
 
 ## Links for research 
 - Blockchain in [SemanticScholar](https://www.semanticscholar.org/search?year%5B0%5D=2008&year%5B1%5D=2018&q=blockchain&sort=year)
