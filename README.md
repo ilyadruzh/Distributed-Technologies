@@ -1,19 +1,12 @@
-# Анатомия Filecoin
+## О репозитории
 
-Данный репозиторий создан для детального изучения проекта Filecoin, изучение принципов работы и подходов к реализации проекта.
+В данном репозитории собраны мои научные, теоретические и практические исследования в области распределенных технологий.
 
-Официальный сайт проекта: https://filecoin.io
+## Контакты
+- Телеграм группа для общения - [TechGarageRu](https://t.me/techgarageru)
+- Телеграм канал для получения уведомлений по переводу - [ProtocolX](http://t.me/protocolx)
+- Обновление перевода: 2-3 раза в неделю
+- Мой телеграм: [@IlyaDruzhinin](https://t.me/IlyaDruzhinin)
 
-Документация проекта
-* Whitepaper - https://filecoin.io/filecoin.pdf
-* * Перевод - https://github.com/IlyaDruzhinin/filecoin-docs-ru/blob/master/filecoin-whitepaper-ru.md
-* Proof-of-Replication - https://filecoin.io/proof-of-replication.pdf
-* Power Fault Tolerance - https://filecoin.io/power-fault-tolerance.pdf
-* Research Roadmap 2017 - https://filecoin.io/research-roadmap-2017.pdf
-* Whitepaper 2014 - https://filecoin.io/filecoin-jul-2014.pdf
-
-В данном репозитории будет происходить последовательный перевод основной документации, с отсылками к документации из репозиториев:
-https://github.com/IlyaDruzhinin/ipfs-docs-ru и https://github.com/IlyaDruzhinin/distributed-storage-docs-ru
-
-## Структура репозитория
-- Перевод белой бумаги - https://github.com/IlyaDruzhinin/filecoin-docs-ru/blob/master/filecoin-whitepaper-ru.md
+## Поддержать
+- ETH адрес для поддержки: [0x0071a7250ba11e086b0de4afc6e0264061d8c941](https://etherscan.io/address/0x0071a7250ba11e086b0de4afc6e0264061d8c941)
