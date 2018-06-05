@@ -12,6 +12,7 @@ GoogleDrive with awesome pdf (later)
 - [Stanford. CS 251: Bitcoin and Cryptocurrencies](https://crypto.stanford.edu/cs251/)
 - [Blockchain at Berkley](https://blockchain.berkeley.edu/)
 - [HSE. Создание проектов на популярных блокчейн-платформах. (Russian)](https://busedu.hse.ru/catalog/210535865.html)
+- [ETH Zurich. Distributed Computing Group](https://disco.ethz.ch/courses)
 
 ## Contacts
 - Telegram group (russian): [TechGarageRu](https://t.me/techgarageru)
