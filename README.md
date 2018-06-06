@@ -49,5 +49,3 @@ My folder in GoogleDrive - [Blockchain Developer](https://drive.google.com/drive
 ## Links for research 
 - Blockchain in [SemanticScholar](https://www.semanticscholar.org/search?year%5B0%5D=2008&year%5B1%5D=2018&q=blockchain&sort=year)
 - Blockchain in [arXiv.org](https://arxiv.org/search/?query=blockchain&searchtype=all&source=header)
-
-P.S.: I don't dream about millions cash flow. I want to change world to better. And I will glad to world if he give me money for that :)
