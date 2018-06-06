@@ -14,9 +14,9 @@ My folder in GoogleDrive - [Blockchain Developer](https://drive.google.com/drive
 
 ## Support
 - ETH address for donations: [0x0071a7250ba11e086b0de4afc6e0264061d8c941](https://etherscan.io/address/0x0071a7250ba11e086b0de4afc6e0264061d8c941)
-- BTC: ___{ comming soon }____
-- ETC: ___{ comming soon }____
-- Monero: ___{ comming soon }____
+- BTC: _{ comming soon }_
+- ETC: _{ comming soon }_
+- Monero: _{ comming soon }_
 
 ## Education
 - [Stanford. CS 251: Bitcoin and Cryptocurrencies](https://crypto.stanford.edu/cs251/)
@@ -49,3 +49,5 @@ My folder in GoogleDrive - [Blockchain Developer](https://drive.google.com/drive
 ## Links for research 
 - Blockchain in [SemanticScholar](https://www.semanticscholar.org/search?year%5B0%5D=2008&year%5B1%5D=2018&q=blockchain&sort=year)
 - Blockchain in [arXiv.org](https://arxiv.org/search/?query=blockchain&searchtype=all&source=header)
+
+P.S.: I don't dream about millions cash flow. I want to change world to better. And I will glad to world if he give me money for that :)
