@@ -1,11 +1,16 @@
 ## Preface
-В данном репозитории собраны мои научные, теоретические и практические исследования в области распределенных технологий.
+In this repository are collected my scientific, theoretical and practical research in the field of distributed technologies.
+
+__Notice__: Russian language is a main language for this repository. Sometimes I'll be writing some articles and descriptions in English. You can ask me why? English tech communities biggest then Russian. And English community have a lot of materials. All materials from that repo you can find in Internet. I'll be linking every description to source pdf, articles and any other resources.
 
 ## Inroduction
 
 My name is Ilya. I'm software developer. Rust is my main programming language. 
 
-GoogleDrive with awesome pdf (later)
+My folder in GoogleDrive - [Blockchain Developer](https://drive.google.com/drive/u/0/folders/1SSQwOTq43j9yBWR9ua0sg3c1V5TzVIHG) 
+
+## Recent News
+05 June 2018: I created this repository
 
 ## Support
 - ETH address for donations: [0x0071a7250ba11e086b0de4afc6e0264061d8c941](https://etherscan.io/address/0x0071a7250ba11e086b0de4afc6e0264061d8c941)
