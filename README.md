@@ -14,6 +14,9 @@ My folder in GoogleDrive - [Blockchain Developer](https://drive.google.com/drive
 
 ## Support
 - ETH address for donations: [0x0071a7250ba11e086b0de4afc6e0264061d8c941](https://etherscan.io/address/0x0071a7250ba11e086b0de4afc6e0264061d8c941)
+- BTC: ___{ comming soon }____
+- ETC: ___{ comming soon }____
+- Monero: ___{ comming soon }____
 
 ## Education
 - [Stanford. CS 251: Bitcoin and Cryptocurrencies](https://crypto.stanford.edu/cs251/)
