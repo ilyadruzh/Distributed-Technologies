@@ -10,7 +10,7 @@ My name is Ilya. I'm software developer. Rust is my main programming language.
 My folder in GoogleDrive - [Blockchain Developer](https://drive.google.com/drive/u/0/folders/1SSQwOTq43j9yBWR9ua0sg3c1V5TzVIHG) 
 
 ## Recent News
-- 07 June 2018: Translate "Polkadot. Validating on PoC 1" to Russian.[Link](polkadot/validating-on-poc-1.md)
+- 07 June 2018: Translate "Polkadot. Validating on PoC 1" to Russian. [Link](polkadot/validating-on-poc-1.md)
 - 05 June 2018: I created this repository
 
 ## Support
