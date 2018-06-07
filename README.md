@@ -1,13 +1,13 @@
 ## Preface
 In this repository are collected my scientific, theoretical and practical research in the field of distributed technologies.
 
-__Notice__: Russian language is a main language for this repository. Sometimes I'll be writing some articles and descriptions in English. You can ask me why? English tech communities biggest then Russian. And English community have a lot of materials. All materials from that repo you can find in Internet. I'll be linking every description to source pdf, articles and any other resources.
+__Notice__: Russian language is a main language for this repository. Sometimes I'll be writing some articles and descriptions in English. You can ask me why? English tech communities are bigger then the Russian ones. I will give references to source pdf, articles and any other resources.
 
 ## Inroduction
 
-My name is Ilya. I'm software developer. Rust is my main programming language. 
+My name is Ilya Druzhinin. I am a software developer at one of the biggest Russian IT System Integrator. We are developing blockchain solutions for Russian corporations and state-owned companies. We are using these technologies: Ethereum, Exonum, Hyperledger.
 
-My folder in GoogleDrive - [Blockchain Developer](https://drive.google.com/drive/u/0/folders/1SSQwOTq43j9yBWR9ua0sg3c1V5TzVIHG). Welcome to contribute! 
+My folder in Google Drive - [Blockchain Developer](https://drive.google.com/drive/u/0/folders/1SSQwOTq43j9yBWR9ua0sg3c1V5TzVIHG). Welcome to contribute! 
 
 ## Recent News
 - __07 June 2018__: Translate "Polkadot. Validating on PoC 1" to Russian. [Link](polkadot/validating-on-poc-1.md)
