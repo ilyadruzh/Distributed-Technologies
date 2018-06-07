@@ -1,7 +1,7 @@
 ## Preface
 In this repository are collected scientific, theoretical and practical research in the field of distributed technologies.
 
-__Repo status: not ready yet... work in progress... 1% done
+__Repo status: not ready yet... work in progress... 1% done__
 
 __Notice__: Russian language is a main language for this repository. Sometimes I'll be writing some articles and descriptions in English. You can ask me why? English tech communities are bigger then the Russian ones. I will give references to source pdf, articles and any other resources.
 
