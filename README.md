@@ -7,7 +7,7 @@ __Notice__: Russian language is a main language for this repository. Sometimes I
 
 ## Introduction
 
-My name is Ilya Druzhinin. I am a software developer at one of the biggest Russian IT System Integrator. We are developing blockchain solutions for Russian corporations and state-owned companies. We are using these technologies: Ethereum, Exonum, Hyperledger.
+My name is Ilya Druzhinin. I am a senior software developer at one of the biggest Russian IT System Integrator. We are developing blockchain solutions for Russian corporations and state-owned companies. We are using these technologies: Ethereum, Exonum, Hyperledger.
 
 My folder in Google Drive - [Blockchain Developer](https://drive.google.com/drive/u/0/folders/1SSQwOTq43j9yBWR9ua0sg3c1V5TzVIHG). Welcome to contribute! 
 
