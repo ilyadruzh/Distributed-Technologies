@@ -1,9 +1,9 @@
 ## Preface
-In this repository are collected my scientific, theoretical and practical research in the field of distributed technologies.
+In this repository are collected scientific, theoretical and practical research in the field of distributed technologies.
 
 __Notice__: Russian language is a main language for this repository. Sometimes I'll be writing some articles and descriptions in English. You can ask me why? English tech communities are bigger then the Russian ones. I will give references to source pdf, articles and any other resources.
 
-## Inroduction
+## Introduction
 
 My name is Ilya Druzhinin. I am a software developer at one of the biggest Russian IT System Integrator. We are developing blockchain solutions for Russian corporations and state-owned companies. We are using these technologies: Ethereum, Exonum, Hyperledger.
 
@@ -40,12 +40,11 @@ My folder in Google Drive - [Blockchain Developer](https://drive.google.com/driv
 - Telegram channel: [ProtocolX](http://t.me/protocolx)
 - My Telegram: [@IlyaDruzhinin](https://t.me/IlyaDruzhinin)
 - Medium: [@IlyaDruzhinin](https://medium.com/@ilyadruzhinin)
-- Facebook: 
+- Facebook: [Link](http://facebook.com/1523835893)
 - Twitter: [IlyaDruzhinin](https://twitter.com/IlyaDruzhinin)
-- Instagram: 
-- YouTube (russian): 
-- YouTube (english):
-- Patreon: 
+- Instagram: [Link](https://instagram.com/ilya_druzh)
+- YouTube (russian): { comming soon }
+- YouTube (english): { comming soon }
 
 ## Links for research 
 - Blockchain in [SemanticScholar](https://www.semanticscholar.org/search?year%5B0%5D=2008&year%5B1%5D=2018&q=blockchain&sort=year)
