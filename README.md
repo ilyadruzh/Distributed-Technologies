@@ -15,7 +15,7 @@ My folder in Google Drive - [Blockchain Developer](https://drive.google.com/driv
 - __07 June 2018__: Translate "Polkadot. Validating on PoC 1" to Russian. [Link](polkadot/validating-on-poc-1.md)
 - __05 June 2018__: I created this repository
 
-## Support
+## Donations
 - ETH address for donations: [0x0071a7250ba11e086b0de4afc6e0264061d8c941](https://etherscan.io/address/0x0071a7250ba11e086b0de4afc6e0264061d8c941)
 - BTC: _{ comming soon }_
 - ETC: _{ comming soon }_
