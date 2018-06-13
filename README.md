@@ -49,5 +49,6 @@ My folder in Google Drive - [Blockchain Developer](https://drive.google.com/driv
 - YouTube (english): { comming soon }
 
 ## Links for research 
-- Blockchain in [SemanticScholar](https://www.semanticscholar.org/search?year%5B0%5D=2008&year%5B1%5D=2018&q=blockchain&sort=year)
+- Blockchain in [SemanticScholar.org](https://www.semanticscholar.org/search?year%5B0%5D=2008&year%5B1%5D=2018&q=blockchain&sort=year)
 - Blockchain in [arXiv.org](https://arxiv.org/search/?query=blockchain&searchtype=all&source=header)
+- Blockchain in [ResearchGate.net](https://www.researchgate.net/search?context=publicSearchHeader&q=blockchain)
