@@ -8,38 +8,39 @@ Polkadot прежде всего, описывается как протокол
 
 # Relay chain
 
-The relay chain это упрощенный proof-of-stake блокчейн с движком Web Assembly (Wasm). В отличии от Ethereum и Bitcoin, балансы не являются значимой частью т.н. функции по изменению состояния - state-transition function (STF). Indeed the only aspect of the relay-chain which is first-class is the notion of an *object*. Each object is identified through an index (`ObjectID`) and has some code and storage (similar to Ethereum contract accounts). The code exports functions which can be called either from other objects or through a transaction.
+Relay chain это упрощенный proof-of-stake блокчейн с движком Web Assembly (Wasm). В отличии от Ethereum и Bitcoin, балансы не являются значимой частью т.н. функции по изменению состояния (state-transition function (STF)). Действительно, единственный аспект релейной цепи, который является первоклассным - это понятие `объект`. Каждый объект идентифицируется через индекс (`ObjectID`) и имеет некоторый код и хранилище (аналогично контрактам аккаунтов в Ethereum). Код экспортирует функции, которые могут быть вызваны либо из других объектов, либо через транзакции.
 
-Practically speaking, account balances do exist on the relay chain but are entirely an artefact of an object's storage and code. The entire state transition is managed through a single call into a particular object named "Administration". Aside from the consensus algorithm (which is "hard-coded" into the protocol for light-client practicality), all aspects of the protocol are soft-coded as the logic of these objects and can be upgraded without any kind of hard-fork.
+Практически говоря, балансы аккаунтов существуют в релейной цепи, но полностью являются артефактом хранилища и кода объекта. Весь переход состояния управляется через одиночные вызовы в определенный объект, называемый "Administration". Помимо алгоритма консенсуса (который "жестко закодирован" в проколе для практичности легкого клиента), все аспекты прокола программируеются как логика этих объектов и могут быть обновлены без какого-либо жесткого форка.
 
-## Consensus
+## Консенсус
 
-Consensus is defined as the job of ensuring that the blockchain, and thus the collection of state-transitions from genesis to head, is agreed upon between all conformant clients and can progress consistently. It is separated from the rest of block-processing and forms a "hard-coded" part of the protocol, not handled by the Wasm object-execution environment. This is primarily because it would make light-client implementation extremely difficult and largely preclude multiple strategies for consensus-forming that could add substantial reliability to the network.
+Консенсус определяет как работает блокчейн и следовательно кколлекциую переход состояния от генезиса к вершине, согласованых между всех совместимых клиентов и постоянно прогрессирует. Он отделен от остальной части обработки блоков и образует "жестко закодированную" часть протокола, не обрабатываемую средой исполнения обхектов Wasm. Это в первую очередь сделано, потому что это сделало бы реализацию клиента чрезвычайно трудной и в заничительной степени исключило бы множественные стратегии формирования консенсуса, которые могли бы добавить существенную надежность сети.
 
-It is managed in three parts:
+Он управляется в трех частях:
 
-1. an instant-finality mechanism that provides forward-verifiable finality on a single relay-chain block (eventually likely based on Zyzzyva/Aardvark/Abab. See section below for the PBFT-based algorithm used in early PoCs);
-2. a parachain candidate determination routine that provides a means of forming consensus over a set of parachain candidates that fulfil certain criteria based on signed statements from validators;
-3. a relay-chain transaction-set collation mechanism for determining which signed, in-bound transactions are included.
+механизм мгновенного завершения, который обеспечивает проверяемую вперед окончательность на одном блоке релейной цепи (в конечном итоге, вероятно, на основе Zyzzyva/Aardvark/Abab. См. Раздел ниже для основанного на PBFT алгоритма, используемого в ранних PoCs);
+в parachain кандидат в определении процедуры, которая обеспечивает возможность формирования консенсуса по ряду parachain кандидатов, которые удовлетворяют определенным критериям, на основе подписанных заявлений от проверяющих;
+механизм сопоставления набора транзакций ретрансляционной цепочки для определения подписанных, связанных транзакций.
 
-Of the three attributes of consensus, namely consistency, availability and partition-tolerance, we are generally prepared to give up large-scale partition-tolerance of the validator set (who we can highly motivate to ensure they remain online and well-connected), and get according guarantees over the consistency and availability. As such an instant-finality consensus algorithm is well-suited, such as PBFT or an optimistic derivative like Zyzzyva.
+Из трех атрибутов консенсуса, а именно: согласованность, доступность и толерантность к разделам, мы, как правило, готовы отказаться от крупномасштабного допуска к разделам набора валидаторов (которого мы можем сильно мотивировать, чтобы они оставались в сети и хорошо связаны), и получить соответствующие гарантии согласованности и доступности. Как таковой алгоритм консенсуса мгновенного завершения хорошо подходит, например, PBFT или оптимистическая производная, такая как Zyzzyva.
 
-Points 2 and 3 are both part of the same underlying need to determine the block that will be finalised among all validators as point 1. The only aspect of the block that needs to be determined (i.e. the only part of the block that is non-deterministic) is the transaction set which is included. This covers both parachain candidate selection and external transaction inclusion. (Parachain candidates are selected by means of inclusion of a specific transaction.)
+Точки 2 и 3 являются частью одной и той же базовой потребности определить блок, который будет завершен среди всех валидаторов как точка 1. Единственный аспект блока, который должен быть определен (т. е. единственная часть блока, которая является недетерминированной),-это набор транзакций, который включен. Это касается как отбора кандидатов parachain и внешней интеграции сделки. (Кандидаты Parachain выбраны путем включения конкретной сделки.)
 
-A final parachain candidate-selection algorithm will likely be distributed and progressive, giving both greater efficiency and a more graceful degradation and leading to fewer artefacts which could potentially cause security holes. For PoC-1, a much more centralised mechanism will be used relying on an elevated set of group leaders to collate and specify parachain candidates.
+Окончательный алгоритм выбора кандидата на парашют, вероятно, будет распределен и прогрессивен, что даст как большую эффективность, так и более изящную деградацию и приведет к меньшему количеству артефактов, которые потенциально могут вызвать дыры в безопасности. Для PoC-1 будет использоваться гораздо более централизованный механизм, основанный на повышенном наборе лидеров групп для сопоставления и определения кандидатов на парашют.
 
 ### PoC-1 Parachain candidate selection
 
-Every block, each validator is deterministically assigned (through a CSPRNG function) to a single parachain or the relay-chain. There is exactly one validator who is designated leader for each parachain and exactly one validator who is designated to the relay-chain.
+Каждый блок, каждый валидатор детерминистически присваивается (через функцию CSPRNG) одному парашюту или релейной цепи. Есть ровно один валидатор, который является назначенным руководителем для каждого parachain и ровно через валидатор, который предназначен для реле-цепь.
 
 ```
 let block_number := S.Nobody.block_number()
 let (v.home_chain, v.is_leader) := determine_role(v, block_number)
 ```
 
-`v.home_chain` may be a parachain index or `Relay`.
+`v.home_chain` может быть индекс parachain или реле.
 
-If the validator is a leader, they will select a valid parachain block candidate (which it is presumed will be provided by the parachain collators), sign it and forward it to each other validator assigned to that parachain.
+Если валидатор является лидером, они будут выберите правильный parachain кандидата от блока (который предполагается, будет обеспечиваться сортировщиков parachain), подписать его и направить друг другу оценщика, присвоенный этому parachain.
+
 
 ```
 let h := keccak256(block_number ++ 'valid' ++ v.home_chain ++ candidate)
@@ -74,26 +75,26 @@ else
 	author block
 ```
 
-Each other validator will sign and reply with an attestation that all information relating to this block is available, including extrinsic information such as transactions and externally-dependent information such as the egress-queue data. By signing this attestation, the validators promise to provide this information to any other validator for a minimum of `era_length` blocks.
+Каждый другой валидатор подпишет и ответит подтверждением того, что вся информация, относящаяся к этому блоку, доступна, включая внешнюю информацию, такую как транзакции и внешне зависимую информацию, такую как данные выходной очереди. Подписывая эту аттестацию, валидаторы обещают предоставить эту информацию любому другому валидатору как минимум для блоков era_length.
 
-There must be a strict minimum of attestations (undetermined as yet but called `attest_min`) for the candidate to be considered safe. The set of `attest_min + 1` signatures together with the parachain candidate's hash is then rebroadcast to the validator designated to the relay chain.
+Для того чтобы кандидат считался безопасным, должен быть установлен строгий минимум аттестаций (пока не определен, но называется attest_min). Набор attest_min + 1 подписей вместе с кандидатом parachain хэш затем ретранслировать валидатору места в цепи реле.
 
-The validator designated to the relay chain collects transactions for the relay chain block and, on receipt of all (subject to reasonable timeout) properly signed/attested parachain candidates, constructs and rebroadcasts the final block to each validator together with all signatures. It is up to each validator to verify that all parachain candidates are properly attested. The final block's header is then hashed and used in the finalisation algorithm.
+Валидатор, назначенный для релейной цепи, собирает транзакции для блока релейной цепи и, по получении всех (при условии разумного тайм-аута) должным образом подписанных/аттестованных кандидатов на парашют, строит и ретранслирует окончательный блок каждому валидатору вместе со всеми подписями. Каждая валидатором чтобы убедиться, что все кандидаты parachain должным образом засвидетельствовано. Заголовок заключительного блока затем хэшируется и используется в алгоритме завершения.
 
-> CONSIDER: Allocating a large CSPRNG subset of validators (maybe 33% + 1) to elect transactions. The subset is ordered with a power-law distribution of transaction allocation. Those allocated greater number of transactions also take a higher priority (and effectively render moot the lower-order validators), meaning that most of the time the first few entrants is enough to get consensus of the transaction set. In the case of a malfunctioning node, the lower-order validators acting in aggregate allow important (e.g. Complaint) transactions to make their way into the block.
+Рассмотрим: выделение большого подмножества валидаторов CSPRNG (возможно, 33% + 1) Для выбора транзакций. Подмножество упорядочено в степенной распределение транзакций. Те, кому выделено большее количество транзакций, также имеют более высокий приоритет (и фактически ставят под сомнение валидаторы более низкого порядка), что означает, что в большинстве случаев первых нескольких участников достаточно, чтобы получить консенсус по набору транзакций. В случае неисправного узла валидаторы более низкого порядка, действующие в совокупности, позволяют важным (например, жалобам) транзакциям проникать в блок.
 
 ### PoC Consensus Algorithm
 
-This is a PBFT-based algorithm.  There are `n` validators altogether, with a maximum of `f` arbitrarily faulty. 
+Это алгоритм на основе PBFT. Всего существует n валидаторов с максимумом F произвольно ошибочных.
 
-We consider a weakly synchronous network, where the adversary can reorder or delay messages indefinitely, with the only stipulation being that messages eventually arrive. The communication model assumes each validator having a channel with each other validator, although in practice messages are likely to be circulated by gossip.
+Мы рассматриваем слабосинхронную сеть, где противник может переупорядочивать или задерживать сообщения на неопределенный срок, с единственным условием, что сообщения в конечном итоге прибывают. Модель коммуникации предполагает, что каждый валидатор имеет канал друг с другом валидатор, хотя на практике сообщения, вероятно, будут распространяться сплетнями.
 
-The algorithm proceeds in rounds (starting at 0), with a primary selected using a deterministic primary selection function `Primary(round)`.
+Алгоритм продолжается в раундах (начиная с 0), причем первичный выбирается с помощью детерминированной функции первичного выбора Primary(round).
 
-The primary selection algorithm isn't fully determined, but will be similar to taking the `r`th validator mod the number of validators.
+Алгоритм первичного выбора не полностью определен, но будет аналогичен тому, как rth validator mod принимает количество валидаторов.
 
-The primary's job is to propose a relay chain block for inclusion. 
-We also consider a hash function H which maps proposals to their digests such that collisions have a negligible probability.
+Основная задача состоит в том, чтобы предложить блок цепи реле для включения. Мы также рассматриваем хэш-функцию H, которая отображает предложения в их дайджесты таким образом, что коллизии имеют незначительную вероятность.
+
 
 ```
 PROPOSE(round, Proposal)
@@ -102,102 +103,104 @@ COMMIT(round, Digest)
 ADVANCE(round)
 ```
 
-Definitions:
-  - threshold-prepare: a set of signed `PREPARE(r, D)` messages from at least `n - f` validators with `r` and `D` all the same.
-  - justification: a set of signed `COMMIT(r, D)` messages from at least `n - f` validators with `r` and `D` all the same.
-  - threhsold-advance: a set of signed `ADVANCE(r)` messages from at least `n - f` validators with `r` all the same.
+Терминология:
 
-Description of the algorithm:
-  - Upon onset of round r, each validator sets a round timeout which increases exponentially with the round number. `Primary(r)` creates a proposal P and multicasts a signed `PROPOSE(r, P)`.
-  - Upon receipt of `PROPOSE(r, P)` signed by `Primary(r)`, a validator V evaluates the validity of P. If P is deemed valid, V multicasts a signed `PREPARE(r, H(P))` unless V has already broadcast a `PREPARE` message in r.
-  - Upon witnessing a threshold-prepare for `r` and `H(P)`, a validator multicasts a signed `COMMIT(r, H(P))` unless he has already broadcast `ADVANCE(r)`.
-  - Upon timeout or witnessing `f + 1` signed `ADVANCE(r)` messages, a validator multicasts a signed `ADVANCE(r)`.
-  - Upon witnessing a threshold-advance for `r`, proceed to round `r + 1`.
-  - Upon witnessing a justification for some digest `H(X)`, exit with `H(X)`.
+threshold-prepare: набор подписанных Сообщений PREPARE (r, D) от по крайней мере N - F валидаторов с r и D все равно.
+обоснование: набор подписанных Сообщений фиксации (r, D) от по крайней мере N - F валидаторов с r и D все равно.
+threhsold-аванс: набор подписано предварительное(р) сообщений не менее N - валидаторы Ф С Р все же.
 
-There are two additional "locking" rules:
-  - Validators may only `PROPOSE`, `PREPARE`, and `COMMIT` the proposal from the threshold-prepare with highest round witnessed, if it exists.
-  - Validators must consider any proposal from the threshold-prepare with highest round witnessed valid, if it exists.
+Описание алгоритма:
 
-For this consensus protocol to be safe and live, we assume `n = 3f + k`, k > 0.
+При начале раунда r каждый валидатор устанавливает таймаут раунда, который экспоненциально увеличивается с числом раунда. Основной(р) создает предложение p И рассылает подписанным предлагаю(Р, П).
+При получении предложения(Р, П) подписан основным(Р), А В валидатор оценивает действительность P. если p является действительной в мультикаст подписанный подготовить(р, ч(п)), если в уже транслировать подготовить сообщение в р.
+После наблюдения за порог-подготовить для R и H(p), то валидатор мультикаст подписанный фиксации(р, ч(п)), если он уже вещали вперед(р).
+При таймауте или наблюдении F + 1 подписанное продвижение (r) сообщения, мультикаст валидатора подписанное продвижение (r).
+Увидев порог-продвижение для r, переходите к раунду r + 1.
+Увидев обоснование для некоторого дайджеста H (X), выйдите с H(X).
 
-The first rule is necessary to preserve the "safety" property: 
+Существует два дополнительных правила блокировки:
 
-If `f + k` good validators multicast `COMMIT(r, D)`, the `f` faulty validators can create a valid justification for `D`. Thus if another digest `D'` is finalized by the `n - f` good validators in another round, two proposals have been finalized. 
+Валидаторы могут предлагать, подготавливать и фиксировать предложение только с порога-подготовьте с самым высоким раундом, если он существует.
+Валидаторы должны рассмотреть любое предложение от порога-подготовьте с самым высоким раундом засвидетельствованным действительным, если он существует.
 
-However, if those `f + k` validators are locked to `D`, there is no way for the remaining `f` good validators to threshold-prepare or even commit to another digest `D'` even when combined with the `f` faulty validators, as `2f < n - f`.
+Чтобы этот консенсусный протокол был безопасным и живым, мы предполагаем n = 3f + k, k > 0.
 
-The second rule is necessary to preserve the "liveness" property in Polkadot:
+Первое правило необходимо для сохранения" безопасного " имущества:
 
-Validators in general will refuse to consider any proposal containing a candidate it has received even a single invalidity vote for as valid.
+Если F + k хорошие валидаторы многоадресная фиксация (r, D), дефектные валидаторы f могут создать действительное обоснование для D. таким образом, если другой дайджест D' будет завершен хорошими валидаторами n - f в другом раунде, два предложения были завершены.
 
-If the `f` faulty validators go inactive when any good validator is locked, this will require full co-operation of the good `2f + k` validators. If the faulty validators can convince even a single validator not to accept the locked proposal (e.g. by broadcasting an `Invalid` vote for a candidate contained therein), the consensus will halt. Thus we introduce a second rule to relax the validity function somewhat in the case that a proposal has already been prepared for acceptance by the network.
+Однако, если эти валидаторы f + k заблокированы на D, нет никакого способа для остальных валидаторов F good порог-подготовить или даже совершить другой дайджест D ' даже в сочетании с ошибочными валидаторами f, как 2f < n-f.
+
+Второе правило, необходимое для сохранения "живости" недвижимость на улице:
+
+Валидаторы вообще откажутся рассматривать любое предложение, содержащее кандидата, за которого он получил даже один голос недействительности, как действительное.
+
+Если неисправные валидаторы F становятся неактивными, когда любой хороший валидатор заблокирован,это потребует полного сотрудничества хороших валидаторов 2f + K. Если дефектные валидаторы могут убедить даже одного валидатора не принимать заблокированное предложение (например, путем трансляции Недействительного голосования за кандидата, содержащегося в нем), консенсус будет остановлен. Таким образом, мы вводим второе правило, чтобы несколько ослабить функцию действительности в том случае, если предложение уже подготовлено для принятия сетью.
 
 ## State
 
-The state of the relay chain has similarities to Ethereum: "objects" contained in it are a mapping from an `ObjectID` identifier to code (a SHA3 of Wasm code) and storage (a Merkle-trie root for a set of `H256` to `bytes` mappings). Objects are bland Wasm code bundles with a couple of external facilities open to them as user-functions, primarily the ability to call into other objects and to access its own storage.
+Состояние цепи ретрансляции имеет сходство с Ethereum: "объекты", содержащиеся в ней, являются отображением из идентификатора ObjectID в код (SHA3 кода Wasm) и хранением (корень Merkle-trie для набора отображений H256 в байты). Объекты представляют собой мягкие пакеты кода Wasm с несколькими внешними объектами, открытыми для них как пользовательские функции, в первую очередь возможность вызова других объектов и доступа к собственному хранилищу.
 
-Notably, no balance or nonce information is stored directly in the state. Balances, in general, are unneeded since relay-chain DOTs are not a crypto-currency per se and cannot be transferred between owners directly. Nonces, for the purposes of replay-protection are managed by the specialised Authentication object.
+Примечательно, что информация о балансе или nonce не хранится непосредственно в государстве. Балансы, как правило, не нужны, так как точки ретрансляционной цепи не являются криптовалютой как таковой и не могут быть переданы между владельцами напрямую. Nonces, для целей replay-protection управляются специализированным объектом аутентификации.
 
-Ownership of DOTs is managed by two objects: the Staking object (which manages DOTs stakes by users) and the Parachains object (which manages the DOTs owned by parachains). Transfer between the Staking and the Parachains objects happens via a signed transaction being included in the relay chain.
+Собственности точками осуществляется двух объектов: разбивка объекта (который управляет долями точками пользователями) и Parachains объект (который контролирует все точки принадлежащие parachains). Передача между объектами Staking и Parachains происходит через подписанную транзакцию, включенную в цепь реле.
 
 ```
 state := ObjectID -> ( code_hash: Hash, storage_root: Hash )
 ```
+Каждый объект выполняет определенные функции (хотя со временем они могут быть расширены или сокращены по мере внесения изменений в протокол). Для PoC-1 объекты:
 
-The objects each fulfil specific functions (though over time these may be expanded or contracted as changes in the protocol determine). For PoC-1, the objects are:
+    Объект 0: Никто. Базовый объект пользовательского уровня. Можно запрашивать не чувствительны всеобщего сведения (как block_number(), block_hash()). Представляет источник внешней транзакции, прошедший проверку подлинности на уровне пользователя.
+    Объект 1: Системы. Обеспечивает низкоуровневое изменяемое взаимодействие с заголовком, в частности set_digest (). Представляет источник системы, который включает все принятые валидатором неподписанные транзакции.
+    Объект 2: Администрация. Хранит и администрирует параметры цепочки низкого уровня. Может в одностороннем порядке считывать и заменять код / хранилище во всех объектах &c. Принимает и выступает на голосовании. Действует как точка входа в выполнение блока / состояние-переход.
+    Объект 3: Консенсус. Хранит все вещи консенсус и код логика консенсуса реле-цепи. Требует быть информированным о текущем наборе валидатора и может быть запрошен для профилей поведения. Валидатор проверяет подписи.
+    Объект 4: Фиксация. Хранит все, что нужно сделать с алгоритмом доказательства ставок, особенно в настоящее время. Информирует объект консенсуса о текущем наборе средств проверки. Хозяева Кол.-голосование.
+    Объект 5: Парашюты. Хранит все вещи, чтобы сделать с parachains в том числе общей суммы parachain, реле-цепь-родные балансы пользователей, которые могут быть использованы (в parachain), функция проверки, информацию и текущее состояние очереди. Сбрасывается в начале каждого блока, чтобы позволить сообщениям предыдущего блока к цепочке ретрансляции выполняться.
+    Объект 6: Проверка Подлинности. Управляет проверкой подписей транзакций и защитой воспроизведения.
+    Объект 7: Метка Времени. Сохраняет Текущее время. Раз в блоке объектом системы.
 
-- Object 0: Nobody. Basic user-level object. Can be queried for non-sensitive universal data (like `block_number()`, `block_hash()`). Represents the "user-level" authenticated external transaction origin.
-- Object 1: System. Provides low-level mutable interaction with header, in particular `set_digest()`. Represents the system origin, which includes all validator-accepted, unsigned transactions.
-- Object 2: Administration. Stores and administers low-level chain parameters. Can unilaterally read and replace code/storage in all objects, &c. Hosts and acts on stake-voting activities. Acts as entry point in block execution/state-transition.
-- Object 3: Consensus. Stores all things consensus and code is the relay-chain consensus logic. Requires to be informed of the current validator set and can be queried for behaviour profiles. Checks validator signatures.
-- Object 4: Staking. Stores all things to do with the proof-of-stake algorithm particularly currently staked amounts. Informs the Consensus object of its current validator set. Hosts stake-voting.
-- Object 5: Parachains. Stores all things to do with parachains including total parachain balances, relay-chain-native user balances that are transferable (per parachain), validation function, queue information and current state. Is flushed at the beginning of each block in order to allow the previous block's messages to the relay chain to execute.
-- Object 6: Authentication. Manages checking the transaction signatures and replay protection.
-- Object 7: Timestamp. Stores the current time. Changed once per block by the System object.
-
-For PoC-1, these objects are likely to be built-in, though eventually they should be implemented as Wasm modules and dynamically compiled/executed.
+Для PoC-1 эти объекты, вероятно, будут встроенными, хотя в конечном итоге они должны быть реализованы как модули Wasm и динамически скомпилированы/выполнены.
 
 ## Execution Environment
 
-The transition function is mostly similar to an unmetered variant of Ethereum that removes all balance/nonce and the "open" ability to create "smart-contracts" (objects). Main points are:
+Функция перехода в основном похожа на неупорядоченный вариант Ethereum, который удаляет весь баланс / nonce и" открытую "способность создавать" смарт-контракты " (объекты). Основные моменты:
 
-- Utilisation of Wasm engine for code execution rather than EVM.
-- Transactions include a function name and call-execution "automatically" dispatches to a function within the code body.
-- Wasm intrinsics replace some of the EVM externality functions/opcodes, the rest are unneeded:
-  - `BLOCKHASH` -> n/a (provided by `Nobody.block_hash()`)
-  - `NUMBER` -> n/a (provided by `Nobody.current_number()`)
-  - `LOG*` -> `System.deposit_log()`
-  - `CREATE` -> `deploy` (which takes a new object index and clobbers any existing code there; no init function is run).
-  - `CALL` -> `call` or `call_const`
-  - `RETURN` -> n/a (`return` in Wasm)
-  - `CALLDATA*` -> n/a (parameters are passed into the function pre-deserialised from the transaction using the function's signature as hint)
-  - `TIMESTAMP` -> n/a (there is a timestamp object)
-  - `BALANCE`/`ORIGIN`/`GASPRICE`/`EXTCODE`/`COINBASE`/`DIFFICULTY`/`GASLIMIT`/`GAS`/`CALLCODE`/`DELEGATECALL`/`SUICIDE` -> n/a
+    Использование движка Wasm для выполнения кода, а не EVM.
+    Транзакции включают имя функции и вызов-выполнение "автоматически" отправляет функции в теле кода.
+    Wasm intrinsics заменяет некоторые из функций/опкодов externality EVM, остальные ненужны:
+        BLOCKHASH - > n /a (предоставляется никем.block_hash())
+        Номер - > n /a (предоставлено никем.текущее количество())
+        LOG* - > System.deposit_log()
+        CREATE - > deploy (который берет новый индекс объекта и clobbers любой существующий код там; никакая функция инициализации не выполняется).
+        Вызов - > вызов или call_const
+        RETURN - > n /a (возврат в Wasm)
+        CALLDATA* -> Н/А (параметры передаются в функцию предварительного deserialised из сделки с помощью функции подписи как намек)
+        Метка -> Н/А (есть отметка объекта)
+        Баланс/происхождения/GASPRICE/EXTCODE/фонда/сложности/GASLIMIT/ГАЗ/CALLCODE/DELEGATECALL/суицид -> н/д
 
 ## Block Processing
 
-In summary, the normative mechanism for processing a block is:
+Таким образом, нормативный механизм обработки блока:
 
-- check the block data is valid RLP with correct item formats; let `block` be the structured data;
-- let `header := block.header`;
-- check the `header.transactions_root` properly reflects `block.transactions`;
-- check a validated block is stored by the node for `header.number - 1` and that its header-hash is `header.parent_hash` (in the normative case, this will be the current validated head);
-- let `S` be the state at the end of the execution of block `header.parent_hash`; let `validator_set := S.Consensus.validator_set()`; ensure that `S.Consensus.check_seal(validator_set, block)` does not abort; (This will check the `signatures` segment lists the correct number of valid validator signatures with the validator set given by the Consensus object. We require `check_seal` to be stateless with any required state information passed in through `validator_set` to facilitate parallelisation.)
-- ensure `S` is mutable but that any mutations do not get committed except where explicitly noted;
-- `System` calls `S.Administration.execute_block(block)`; if it aborts, revert/discard `S` and the block is considered invalid.
+    проверьте правильность данных блока RLP с правильными форматами элементов; пусть block-структурированные данные;
+    пусть Заголовок: = блок.заголовок;
+    проверьте Заголовок.transactions_root правильно отражает блок.сделки;
+    проверьте, что проверенный блок хранится узлом для заголовка.номер-1 и что его хэш-Заголовок является заголовком.parent_hash (в нормативном случае это будет текущая проверенная головка);
+    пусть s-состояние в конце выполнения заголовка блока.parent_hash; пусть validator_set: = S. консенсус.validator_set (); убедитесь, что S. консенсус.check_seal (validator_set, блок) не прерывается; (это проверит сегмент сигнатур перечисляет правильное количество действительных подписей валидатора с набором валидатора, заданным объектом консенсуса. Мы требуем check_seal без гражданства с любой необходимой государственной информации прошло через validator_set для облегчения parallelisation.)
+    убедитесь, что S является изменяемым, но что любые мутации не фиксируются, за исключением случаев, когда явно указано;
+    Системные вызовы S. Администрирование.execute_block (блок); если он прерывается, отменить / отбросить S и блок считается недействительным.
 
 ### Invalid blocks
 
-If a block is considered invalid and should be marked so it is not processed again.
+Если блок считается недействительным и должен быть отмечен, чтобы он не обрабатывался снова.
 
 # Data formats
 
-Data structures are RLP-encoded using normative Ethereum RLP.
+Структуры данных кодируются rlp с использованием нормативного Ethereum RLP.
 
 ## Block
 
-A block contains all information required to evaluate a relay-chain block. It includes extrinsic data specific to the relay chain.
+Блок содержит всю информацию, необходимую для оценки блока релейной цепи. Она включает в себя внешние данные, специфичные для цепи реле.
 
 ```
 Block: [
@@ -209,7 +212,7 @@ Block: [
 
 ## Transaction
 
-Transactions are isolatable components of extrinsic data used in blocks to describe specific communications from outside of the state-transition system. Typically they come from either the external world (in which case they will contain a signature to help authenticate their origin and appear in the block as `SignedTransaction`s) or they will come with the tacit acceptance of the block's validator set (in which case they will appear in the block as a `Transaction` and will be executed as if coming from the System object).
+Транзакции являются изолируемыми компонентами внешних данных, используемыми в блоках для описания конкретных коммуникаций извне системы перехода состояния. Как правило, они приходят из внешнего мира (в этом случае они будут содержать подписи для подтверждения их происхождения и появляются в блоке как SignedTransactions) или они придут с молчаливого согласия блока проверки (в этом случае они будут отображаться в блоке как сделка будет выполнена, как если бы исходящее от системы объекта).
 
 ```
 Transaction: [
@@ -226,7 +229,7 @@ SignedTransaction: [
 ]
 ```
 
-In order to describe the signature format, it is useful to define the `UnsignedTransaction` object which is a `Transaction` with a `nonce`, or index to force an order on transactions coming from the same origin to avoid replay attacks.
+Для описания формата подписи полезно определить объект UnsignedTransaction, который является Транзакцией с nonce, или индексировать, чтобы заставить заказ на транзакции, поступающие из того же источника, чтобы избежать атак воспроизведения.
 
 ```
 UnsignedTransaction: [
@@ -235,13 +238,13 @@ UnsignedTransaction: [
 ]
 ```
 
-- `destination` is the object index on which the function will be called.
-- `function_name` is the name of the function of the object that will be called.
-- `parameters` are the parameters to be passed into the function; this is a rich data segment and will be interpreted according to the function's prototype. It should contain exactly the number of the elements as the function's prototype; if any of the function's prototype elements are structured in nature, then the structure of these parameters should reflect that. A more specific mapping between RLP and Wasm ABI will be provided in due course.
+destination - индекс объекта, по которому будет вызвана функция.
+function_name-имя функции объекта, который будет вызван.
+параметры-это параметры, передаваемые в функцию; это богатый сегмент данных, который будет интерпретироваться в соответствии с прототипом функции. Он должен содержать ровно столько элементов, сколько является прототипом функции; если какой-либо из элементов прототипа функции структурирован по своей природе, то структура этих параметров должна отражать это. Более конкретное сопоставление между RLP и Wasm ABI будет обеспечено в надлежащее время.
 
 ## Header
 
-The header stores or cryptographically references all intrinsic information relating to a block.
+Заголовок хранит или криптографически ссылается на всю внутреннюю информацию, относящуюся к блоку.
 
 ```
 Header: [
@@ -253,7 +256,7 @@ Header: [
 ]
 ```
 
-`Digest` is a second-class item of data that contains summary information of activity that happened in the block that is useful for light-clients. For PoC-1 this is the set of logs and a bit field of active parachains. Its contents are set through the System object.
+Дайджест-это второсортный элемент данных, содержащий сводную информацию о действиях, произошедших в блоке, который полезен для light-клиентов. Для PoC-1 это набор бревен и немного поля активных парашютов. Его содержимое задается через Системный объект.
 
 ```
 Digest: [
@@ -262,11 +265,12 @@ Digest: [
 ]
 ```
 
-The format of `Digest` should not be assumed to be an unchanging part of the core protocol. Changing it is not a trivial task (since light-clients will depend on its format), but is possible since all accesses to its internals are done by soft-coded objects.
+Формат дайджеста не следует считать неизменной частью основного протокола. Изменение его не является тривиальной задачей (так как Лайт-клиенты будут зависеть от его формата), но возможно, так как все обращения к его внутренностям осуществляются программно-кодированными объектами.
 
 ## Candidate Parachain block
 
-Candidate parachain blocks are passed from collators to validators and express information concerning the latest state of the parachain. If validated and accepted, then most of this information is duplicated onto the state of the relay chain under the Parachains object (the exception being `block_data`).
+Кандидат parachain блоки передаются от сортировщиков до валидаторов и экспресс-информации о последних состояния parachain. Если проверено и принято, то большая часть этой информации дублируется на состояние цепи реле под объектом Parachains (исключение block_data).
+
 
 ```
 Candidate: [
@@ -277,9 +281,9 @@ Candidate: [
 ]
 ```
 
-`unprocessed_ingress` is ordered by block number (lowest first), and then by parachain index and then by message index.
+unprocessed_ingress приказал заблокировать номер (по возрастанию), а затем по индексу parachain, а затем по индексу сообщение.
 
-Candidate receipts are the final data actionable on the relay chain. They are signed and published by relevant parachain validators and shared amongst the network. They can be derived from any relay-chain synced node and the `Candidate` by running the relevant parachain validation function.
+Квитанции кандидата являются окончательными данным на реле цепи. Они подписаны и опубликованы соответствующие валидаторы parachain и распространялись среди сети. Они могут быть получены из любого релейно-цепного синхронизированного узла и кандидата, запустив соответствующую функцию проверки parachain.
 
 ```
 CandidateReceipt: [
@@ -292,19 +296,20 @@ CandidateReceipt: [
 ]
 ```
 
-- `parachain_index` is the unique identifier for this parachain. 
-- `egress_queue_roots` is the array of roots of the egress queues. Many/most entries may be empty if the parachain has little outgoing communication with certain other chains. 
-- `balance_uploads` is the set of `AccountID` account identifiers and `U256` positive balance deltas that represent the balances that should be unlocked on the relay chain (since the DOTs have been made unavailable on the parachain itself).
+parachain_index является уникальным идентификатором для этого parachain.
+egress_queue_roots-массив корней выходных очередей. Многие/большинство записей могут быть пустыми, если parachain мало исходящие соединения с другими цепями.
+balance_uploads - это набор идентификаторов счетов AccountID и положительных дельт баланса U256, которые представляют собой балансы, которые должны быть разблокированы на цепи реле (поскольку точки были недоступны на самом парашюте).
 
 # Transaction routing
 
-Importantly, the relay-chain validators do almost nothing regarding transaction routing. All heavy-lifting in terms of tracking egress (outgoing) queues is done by collators.
+Важно отметить, что валидаторы ретрансляционной цепи почти ничего не делают в отношении маршрутизации транзакций. Всю тяжелую работу в плане отслеживания исходящих (исходящих) очереди осуществляется сортировщиков.
 
-For each block of each parachain, there exists a set of outgoing messages to each other parachain. If no state-transition happened for the parachain, then this set will be empty.
+Для каждого блока каждого parachain, существует набор исходящие сообщения друг другу parachain. Если нет государства-перехода произошло на parachain, то это множество будет пустым.
 
-For parachain `P` sending a message to parachain `Q`, at block number `B` we can say `chain[B].parachain[P].egress[Q]` represents this queue. If, for whatever reason, `Q` does not process this queue, then the items are not somehow forwarded or copied into `chain[B + 1].parachain[P].egress[Q]` rather this is a separate queue altogether, describing the output messages resulting from `P`'s block `B + 1`. In this case, when validating a candidate for `Q` after block `B`, the egress queues from `B` will need to be managed in the validation logic.
+Для parachain p, посылающего сообщение parachain Q, в блоке номер B мы можем сказать chain[B].parachain[П].выход[Q] представляет эту очередь. Если по какой-либо причине Q не обрабатывает эту очередь, то элементы не каким-либо образом перенаправляются или копируются в цепочку[B + 1].parachain[П].выход[Q] скорее это отдельная очередь в целом, описывающая выходные сообщения, полученные из блока B + 1 P. В этом случае при проверке кандидата на Q после блока B выходными очередями из B необходимо будет управлять в логике проверки.
 
-A collators role includes tracking all other parachains' egress queues for its chain and amalgamating them into a three-dimensional array when they produce a parachain block:
+Роль сортировщиков включает в себя отслеживание очереди все остальные parachains' выход на свою цепочку и соединив их в трехмерный массив, когда они производят блок parachain :
+
 
 ```
 [
@@ -312,9 +317,9 @@ A collators role includes tracking all other parachains' egress queues for its c
 ]
 ```
 
-There is no item for the parachain itself; it is assumed that the parachain has no need to send messages to itself.
+Нет пункта для самого parachain; предполагается, что parachain нет необходимости отправлять сообщения самому себе.
 
-Each `IngressQueues` item contains a number of arrays of `bytes` messages. The number of such arrays is equal to the number of blocks that have passed since the last parachain block was finalised (each properly finalised parachain block necessarily flushes all other parachain's egress queues to itself).
+Каждый элемент IngressQueues содержит несколько массивов байтовых Сообщений. Число таких матриц равно количеству блоков, которые прошли с последнего блока parachain был завершен (каждый правильно доработать блок parachain обязательно топит очереди все остальные parachain по выходу к себе).
 
 ```
 IngressQueues: [
@@ -325,28 +330,27 @@ IngressQueues: [
 ]
 ```
 
-It is permissible for any of these `[ bytes, ... ]` arrays to be empty.
-
+Допустимо для любого из этих [байт, ... ] массивы должны быть пустыми.
 ### Specifics
 
-Each notional egress queue for a given block `chain[B].parachain[P].egress[Q]` relates to a specific set of data stored in the state. Specific for the end-state `S` of block `B`, we index-key `chain[B].parachain[P].egress_queues[Q]` into a trie. For any given block, the roots of all unprocessed egress queues (at the end of the block's state transition) are stored in its state: `S.Parachains.chain_state(P).egress_queue_roots[Q]`.
+Каждая условная Выходная очередь для заданной цепочки блоков[B].parachain[П].выход[Q] относится к определенному набору данных, хранящихся в состоянии. Специфичный для конечного состояния s блока B, мы индексируем цепочку ключей[B].parachain[П].egress_queues[Q] в триэ. Для любого заданного блока корни всех необработанных выходных очередей (в конце перехода состояния блока) хранятся в его состоянии: S. Parachains.chain_state (P).egress_queue_roots[Q].
 
-As part of its operation, the candidate block validation function requires the unprocessed ingress queues (i.e. relevant other parachain's egress queues). These queues are provided by the collator as part of the candidate block, *but* are validated externally to the validation function "natively" by the validator. Technically these could be validated as part of the validation function, but it would mean duplication of code between all parachains and would inevitably be slower and require substantial additional data wrangling as the witness data concerning historical egress information were composed and passed. Requiring the validator node itself to pre-validate this information avoids this.
+Как часть своей деятельности, функция утверждения блока кандидата требует unprocessed очередей входа (т. е. уместных других очередей выхода parachain). Эти очереди предоставляются средством сортировки как часть блока-кандидата, но проверяются внешне функцией проверки "изначально" средством проверки. Технически они могут быть подтверждены как часть функции проверки, но это будет означать дублирование кода между всеми парашютами и неизбежно будет медленнее и потребует существенных дополнительных данных, поскольку данные свидетелей, касающиеся исторической информации о выходе, были составлены и переданы. Требование к самому узлу валидатора предварительно проверить эту информацию позволяет избежать этого.
 
-The candidate specifies the new set of egress queue roots, and the Validation Function ensures that these are reflected by the state transition of the parachain.
+Кандидат задает новый набор корней очереди выхода, и функция проверки гарантирует, что они отражены переходом состояния парашютиста.
 
-The source and destination are parachain indices.
+Исходный и конечный индексы parachain.
 
-This set of messages is defined by the collator, specified in the candidate block and validated as part of the Validity Function. The set of messages must fulfil certain criteria including respecting limitations on the quantity and size of outgoing queues.
+Этот набор Сообщений определяется collator, Задается в блоке candidate и проверяется как часть функции Validity. Набор Сообщений должен отвечать определенным критериям, включая соблюдение ограничений на количество и размер исходящих очередей.
 
-We name four chain parameters:
+Назовем четыре параметра цепочки:
 
-- `routing_max_messages`: The maximum number of messages that may be sent from a block in total.
-- `routing_max_messages_per_chain`: The maximum number of messages that may be sent from a block into a single other chain in total.
-- `routing_max_bytes`: The maximum number of bytes that all messages can occupy which may be sent from a block in total.
-- `routing_max_bytes_per_chain`: The maximum number of bytes that all messages can occupy which may be sent from a block into a single other chain in total.
+routing_max_messages: максимальное количество сообщений, которые могут быть отправлены из блока в общей сложности.
+routing_max_messages_per_chain: максимальное количество сообщений, которые могут быть отправлены из блока в одну цепочку.
+routing_max_bytes: максимальное количество байт, которое могут занимать все сообщения, которые могут быть отправлены из блока в целом.
+routing_max_bytes_per_chain: максимальное количество байтов, которое могут занимать все сообщения, которые могут быть отправлены из блока в одну другую цепочку.
 
-Part of the process of validation includes checking these four limitations have been respected by the candidate block. This is done at the same time as fee calculation `calculate_fees`.
+Часть процесса проверки включает в себя проверку соблюдения этих четырех ограничений блоком-кандидатом. Это делается в то же время как расчет платы calculate_fees.
 
 # Interface Definitions
 
@@ -364,6 +368,7 @@ Part of the process of validation includes checking these four limitations have 
 
 ### ParachainState
 
+
 ```
 ParachainState : {
 	head_data: bytes,
@@ -376,13 +381,12 @@ ParachainState : {
 
 ## Static Constants
 
-These are not dependent on state. They just float around in the global environment and are inherent to the chain or node itself.
+Они не зависят от государства. Они просто плавают в глобальной среде и присущи самой цепочке или узлу.
 
 - `chain_id() -> ChainID`
 - `sender() -> ObjectID`
 
 ## State-based APIs
-
 ### Environment (0)
 
 - READONLY `block_number(self) -> BlockNumber`
@@ -411,24 +415,24 @@ These are not dependent on state. They just float around in the global environme
 - USER `unstake(mut self)`
 - USER `complain(mut self, complaint: Complaint)`
 
-Staking happens in batches of blocks called eras. At the end of each era, payouts are processed based upon statistics accrued by the Consensus object and the validator set is reaffirmed or changed. An account's staking profile (i.e. parameters that determine when its balance will be used in the staking system) may be set with the `stake` and `unstake` functions. Both specifically targets the next era. Staking information is retained between eras and further calls are unnecessary if the user doesn't wish to change their profile. Each account has a staking balance associated with it (`balance`); this balance cannot be split between different staking profiles.
+Staking происходит в партиях блоков, называемых эра. В конце каждой эры выплаты обрабатываются на основе статистики, накопленной объектом консенсуса, и набор валидаторов подтверждается или изменяется. Разбивка профиля учетной записи (т. е. параметров, которые определяют, когда его баланс будет использоваться в подпор системы) может быть задан с помощью кольев и функции частично. Оба специально нацелены на следующую эру. Информация о ставках сохраняется между эра, и дальнейшие вызовы не нужны, если пользователь не хочет изменять свой профиль. Каждый счет имеет связанный с ним баланс (баланс); этот баланс нельзя разделить между различными профилями.
 
 ### Parachains (5)
 
-- READONLY `chain_ids(self) -> [ ChainID ]`
+    - READONLY `chain_ids(self) -> [ ChainID ]`
 - READONLY `validation_function(self, chain_id: ChainID) -> Fn(consolidated_ingress: [ ( ChainID, bytes ) ], balance_downloads: [ ( AccountID, Balance ) ], block_data: bytes, previous_head_data: bytes) -> (head_data: bytes, egress_queues: [ [ bytes ] ], balance_uploads: [ ( AccountID, Balance ) ])`
 - READONLY `validate_and_calculate_fees_function(self, chain_id: ChainID) -> Fn(egress_queues: [ [ bytes ] ], balance_uploads: [ ( AccountID, Balance ) ]) -> Balance`
 - READONLY `balance(self, chain_id: ChainID, id: AccountID) -> Balance`
-- READONLY `verify_and_consolidate_queues(self, unprocessed_ingress: [ [ [ bytes ] ] ]) -> [ (chain_id: ChainID, message: bytes) ]`: `unprocessed_ingress` is dereferenced in order from outer to inner: block age (oldest first), parachain ID, message index. It aborts if the `unprocessed_ingress` contains items which do not reflect the historical parachain egress queues. It also aborts if it does not contain all items from egress queues bound for this chain that were not yet processed by this chain. Otherwise it returns all messages (the `bytes` items) passed in `unprocessed_ingress`, ordered by block age (oldest first), then by parachain ID, then by message index and paired up with the source parachain ID.
-- READONLY `chain_state(self, chain_id: ChainID) -> ParachainState` returns the state of the parachain `chain_id`.
-- USER `move_to_staking(mut self, chain_id: ChainID, value: Balance)` User-level function which moves a user-balance from this object associated with parachain `chain_id` to the Staking object. Implemented through reducing `S.Parachains.balance` and `S.Parachains.chain_state[chain_id].balance[sender()]` and creating it on the Staking chain with the use of `Staking.credit_staker`.
-- SYSTEM `credit_parachain(mut self, chain_id: ChainID, value: Balance)` System-level function to be called only by Staking object when funds have left that object and are to be credited here.
-- USER `download(mut self, chain_id: ChainID, value: Balance, instruction: bytes)` Denotes a portion of the balance to be downloaded to the parachain. In reality this means reducing the user balance for the `sender()` of parachain `chain_id` by `value` and issuing an out-of-band `balance_downloads` instruction to the parachain through its next validation function. So that the parachain can be told what to do with the DOTs (e.g. whose parachain-based account should be credited) `instruction` is provided. This could reasonably encode more than just a destination address, but it is left for the parachain STF to determine what that encoding is.
-- SYSTEM `update_heads(mut self, candidate_receipts: [ ( ChainID, CandidateReceipt ) ])`
+    - Только для чтения verify_and_consolidate_queues(самовыдвижение, unprocessed_ingress: [ [ [ байт ] ] ]) -> [ (chain_id: ChainID, сообщение: байт) ]: unprocessed_ingress разыменовывается в порядке от внешнего к внутреннему: блок возраст (сначала старые), parachain идентификатор, сообщение индексу. Это прерывается, если unprocessed_ingress содержит элементы, которые не отражают исторические очереди выхода parachain. Он также прерывается, если он не содержит все элементы из выходных очередей, связанных для этой цепочки, которые еще не были обработаны этой цепочкой. В противном случае он возвращает все сообщения (в байтах пользования) прошел в unprocessed_ingress, приказал заблокировать возраста (убыванию), затем по ID parachain, затем по индексу сообщение и в паре с исходным кодом parachain.
+    - Как readonly chain_state(самовыдвижение, chain_id: ChainID) -> ParachainState возвращает состояние chain_id parachain.
+    Move_to_staking пользователей(мут самостоятельно, chain_id: ChainID, значение: баланс) на уровне пользователя функция, которая перемещает пользователя-баланс от этого объекта, связанного с chain_id parachain на ставку объекта. Реализовано за счет уменьшения S. Parachains.баланс и S. парашюты.chain_state[chain_id].баланс [sender()] и создание его на цепочке Staking с использованием Staking.credit_staker.
+    - Система credit_parachain(мут самостоятельно, chain_id: ChainID, значение: баланс) на уровне системы, функция может быть вызвана только поставив объект, когда средства осталось, что объект и подлежащие зачислению здесь.
+    - Скачать руководство пользователя(мут самостоятельно, chain_id: ChainID, значение: Остаток на счете, команды: байт) обозначает часть баланса должны быть загружены в parachain. На самом деле это означает уменьшение баланса пользователя для отправителя() parachain chain_id по значению и выдачу внеполосной инструкции balance_downloads для parachain через его следующую функцию проверки. Так что parachain может быть сказано, что делать с точками (например, чьи parachain на основе счета должны быть зачислены) обучения. Это может разумно кодировать больше, чем просто адрес назначения, но он остается для parachain STF, чтобы определить, что такое Кодировка.
+    - Система update_heads(мут самостоятельно, candidate_receipts: [ ( ChainID, CandidateReceipt ) ])
 
-> CONSIDER: fold `balance_downloads` and `balance_uploads` into `head_data`; would simplify validation function and make it a little more abstract (though `download` and uploading would then require knowledge of `head_data`'s internals).
+    Рассмотрим: сложите balance_downloads и balance_uploads в head_data; упростит функцию проверки и сделает ее немного более абстрактной (хотя загрузка и выгрузка потребует знания внутренних компонентов head_data).
 
-> CONSIDER: allowing messages between parachains to contain DOTs. for the use case of sending a bunch of DOTs from one chain to another, this would vastly simplify things (at present, you'd have to create a new secret/address, upload the DOTs into the relay-chain's Parachains object through a parachain tx, transfer to the staking account and then back to the new parachain (two relay chain txs), then issue a download tx (another relay chain tx)). This could be optimised to three transactions if parachains can transfer between themselves, but it's still a lot of faff for one notional operation.
+    Рассмотреть: возможность сообщения между parachains содержать точек. для использования при отправке кучу точек из одной цепи в другую, это бы значительно упростило (в настоящее время, вам придется создать новый секретный адрес, загрузить точки в реле-цепи Parachains объекта через parachain Техас, перевод на ставку счета, а затем обратно в новый parachain (два реле цепи ВМС США), то проблема в скачать Техас (еще одно реле цепь Техас)). Это может быть оптимизировано для трех транзакций, если парашюты могут перемещаться между собой, но это все еще много faff для одной смысловой операции.
 
 ### Authentication (6)
 
@@ -441,70 +445,70 @@ Staking happens in batches of blocks called eras. At the end of each era, payout
 - READONLY `timestamp(self) -> Timestamp`
 - SYSTEM `set_timestamp(mut self, Timestamp)`
 
-
 # Notes
 
-All USER transactions must burn a fee as soon as possible into their execution and, having done so, must not abort.
+Все транзакции пользователя должны как можно скорее записать плату в их исполнение и, сделав это, не должны прерываться.
 
 # Implementation Notes
 
 ## Administration (2)
 
-The Administration object contains `execute_block` which handles the entire state-transition function. Some of the functions it provides are provided through its ephemeral storage (particularly `deposit_log`, `current_user` and `set_active_parachains`).
+Объект администрирования содержит execute_block, который обрабатывает всю функцию перехода состояния. Некоторые из функций, которые он предоставляет, предоставляются через его эфемерное хранилище (в частности, deposit_log, current_user и set_active_parachains).
 
-Regarding `execute_block`, rough pseudo-code is:
-- for each transaction `tx` in `block.transactions`:
-  - if `tx.signature` exists (signed transaction):
-	- let `current_user := Authorisation.validate(tx)`. If the execution aborts, then the block is aborted and considered invalid.
-	- ensure `current_user` is returned if `Administration.current_user` is called during the execution of this transaction.
-	- let `caller := Nobody`
-  - otherwise if `tx.signature` doesn't exist (unsigned transaction):
-	- let `caller := System`
-  - call `S[tx.destination][tx.function_name](tx.params...)` from account `caller`, where state `S` is the end-state of the `block`. If the execution aborts, then the block is aborted and considered invalid.
-  - reset `current_user` to ensure `Administration.current_user` aborts if called.
+Что касается execute_block, грубый псевдо-код:
 
-Note:
+для каждой транзакции tx в блоке.сделки:
+если Техас.подпись существует (подписанная транзакция):
+пусть функция current_user := Разрешение.проверка(Техас). Если выполнение прерывается, блок прерывается и считается недопустимым.
+убедитесь, что current_user возвращается, если Администрирование.current_user вызывается во время выполнения этой транзакции.
+пусть звонящий: = никто
+в противном случае, если Техас.подпись не существует (неподписанная транзакция):
+пусть звонящий := система
+вызов S[tx.пункт назначения][Техас.function_name] (tx.парамы...) от абонента учетной записи, где state S-конечное состояние блока. Если выполнение прерывается, блок прерывается и считается недопустимым.
+сброс current_user для обеспечения администрирования.current_user прерывается при вызове.
 
-Transactions can include signed statements from external actors such as fishermen or stakers, but can also contain unsigned statements that simply record an "accepted" truth (or piece of extrinsic data). If a transaction is unsigned but is included as part of a block, then its sender is System. The transaction calling `Timestamp.set_timestamp` would be an example of this. When a validator signs a block as a relay-chain candidate they implicitly ratify each of the blocks statements as being valid truths.
+Отмечать:
 
-One statement that appears in the block is selected parachain candidates. In this case it is a simple message to `S.Parachains.update_heads`. This call ensures that any DOT balances on the parachain that are required as fees for the egress-queue are burned.
+Транзакции могут включать подписанные заявления от внешних субъектов, таких как рыбаки или стейкеры, но также могут содержать неподписанные заявления, которые просто записывают "принятую" истину (или часть внешних данных). Если транзакция не подписана, но включена как часть блока, то ее отправителем является System. Метка времени вызова транзакции.set_timestamp был бы примером этого. Когда валидатор подписывает блок как кандидат ретрансляционной цепи, они неявно ратифицируют каждое из заявлений блоков как действительные истины.
 
-
+Одно заявление о том, что появится в блоке отобранных кандидатов parachain. В данном случае это простое сообщение для S. Parachains.update_heads. Этот вызов гарантирует, что любые балансы точки на parachain, которые требуются как сборы за выходную очередь, сожжены.
 ## Parachains (5)
 
 ### Validating & Processing
 
-Relay-chain validation happens in three contexts:
-1. when you are attempting to sync the chain;
-2. when you are building a block and you need to determine the validity of a candidate on a parachain that you are not assigned to;
-3. when you are attempting to validate a parachain candidate, perhaps as a fisherman, perhaps as a validator who is building a block, perhaps as a validator who is responding to a complaint.
+Проверка цепи ретрансляции происходит в трех контекстах:
 
-For the first context, it is enough to simply execute all transactions in the block. Validation happens implicitly through the existence of the unsigned `update_heads` transaction that appear in a block signed by validators.
+при попытке синхронизации цепочки;
+когда вы строите блок, и вам нужно определить действительность кандидата на парашюте, которому Вы не назначены;
+когда вы пытаетесь проверить кандидата parachain, возможно, как рыбак, возможно, как валидатор, который строит блока, возможно, в качестве валидатора, кто отвечает на жалобу.
 
-The second context is much like the first, except that `update_heads` is run manually and availability of the source block is affirmed.
+Для первого контекста достаточно просто выполнить все транзакции в блоке. Проверка происходит неявно через существование неподписанной транзакции update_heads, которая появляется в блоке, подписанном валидаторами.
 
-In all contexts, it is not assumed that you have any chain history. All operations can be done purely through looking at the "current" (relative to the block to be validated) chain state.
+Второй контекст очень похож на первый, за исключением того, что update_heads запускается вручную и подтверждается доступность исходного блока.
 
-For the latter context, the specific steps to validate a parachain candidate on state `S` are:
+Во всех контекстах не предполагается, что у вас есть история цепочки. Все операции могут быть выполнены исключительно путем просмотра состояния цепочки" current " (относительно проверяемого блока).
 
-- Ensure the candidate block is structurally sound. Let `candidate` be the structured data.
-- Retrieve the collator signature for the candidate and let `collator := ecrecover(candidate.collator_signature)`. *NOTE: This is not yet used in the STF; only in the consensus algorithm when determining a preference over possible candidates.*
-- Call `S.Parachains.validate_ingress(candidate)`, and if it aborts then this is an invalid parachain candidate. (This function ensures that `candidate.unprocessed_ingress` is properly reflective of all unprocessed egress queues from all other parachains, as described in the Parachains object's storage. If it is not then this is an invalid parachain candidate and the function aborts.)
-- Let `consolidated_ingress := S.Parachains.verify_and_consolidate_queues(candidate.unprocessed_ingress)`, and if it aborts then this is an invalid parachain candidate.
-- With `S.Parachains.chain_state[candidate.parachain_index]` as `chain`:
-- Let `previous_head_data := chain.head_data`
-- Let `balance_downloads := TAKE chain.balance_downloads` (where `TAKE` means atomically clear the RHS and return it)
-- Let `validate := S.Parachains.validation_function(candidate.parachain_index)`
-- Let `(head_data, egress_queues, balance_uploads) := validate(consolidated_ingress, balance_downloads, block_data, previous_head_data)`; if it aborts, then this is an invalid parachain candidate.
-- Let `validate_and_calculate_fees := S.Parachains.validate_and_calculate_fees_function(candidate.parachain_index)`
-- Ensure all limitations regarding egress queues and balance uploads are observed and calculate fees: Let `fees := validate_and_calculate_fees(egress_queues, balance_uploads)`, and if it aborts, then this is an invalid parachain candidate.
-- If `fees > chain.balance` then this is an invalid parachain candidate.
-- Let `receipt := CandidateReceipt( parachain_index, collator, head_data, to_index_keyed_trie_roots(egress_queues), balance_uploads, fees )`
+На последнем контексте, конкретные шаги для проверки кандидата parachain на государство с:
 
-After all parachain candidates have been established, let `receipts` be the mapping `ChainID -> CandidateReceipt` then:
-- Enact candidate receipt by calling `S.Parachains.update_heads(receipts)`
+Убедитесь, что блок-кандидат является структурно обоснованным. Пусть кандидатом будут структурированные данные.
+Получить подпись collator для кандидата и пусть collator: = ecrecover (кандидат.collator_signature). Примечание: это еще не используется в STF; только в алгоритме консенсуса при определении предпочтения по сравнению с возможными кандидатами.
+Позвонить С. Parachains.validate_ingress(кандидата), и если он прерывается, то это является недопустимым кандидат parachain. (Эта функция обеспечивает этого кандидата.unprocessed_ingress правильно отражает все необработанные очереди исходящих от всех других parachains, как описано в Parachains хранения объекта. Если это не так, то это недопустимое кандидат parachain и прерывает функцию.)
+Пусть consolidated_ingress := С. Parachains.verify_and_consolidate_queues (кандидат.unprocessed_ingress), и если это прерывает тогда, это-недопустимый кандидат parachain.
+С С. Parachains.chain_state[кандидат.parachain_index] как цепь:
+Пусть previous_head_data: = chain.head_data
+Пусть balance_downloads: = взять цепочку.balance_downloads (где взять означает атомарно очистить RHS и вернуть его)
+Давайте проверять := С. Parachains.validation_function (кандидат.parachain_index)
+Пусть (head_data, egress_queues, balance_uploads) := проверить(consolidated_ingress, balance_downloads, block_data, previous_head_data); если он прерывается, то это является недопустимым кандидат parachain.
+Пусть validate_and_calculate_fees := С. Parachains.validate_and_calculate_fees_function (кандидат.parachain_index)
+Гарантируйте, что все ограничения относительно выходных очередей и загрузок баланса соблюдены и вычисляют сборы: пусть сборы: = validate_and_calculate_fees (egress_queues, balance_uploads), и если это прерывает, то это-недопустимый кандидат parachain.
+Если сборы > цепь.баланс, то это недопустимое кандидат parachain.
+Давайте расписку := CandidateReceipt( parachain_index, сортировально-подборочной машины, head_data, to_index_keyed_trie_roots(egress_queues), balance_uploads, сборов )
 
-### Pseudocode for `update_heads`
+После всех parachain кандидатов были созданы, давайте квитанции сопоставление ChainID -> CandidateReceipt тогда:
+
+Ввести в действие квитанцию кандидата, вызвав S. Parachains.update_heads (поступления)
+
+### Pseudocode for update_heads
 
 ```
 update_heads(
@@ -532,13 +536,13 @@ unrouted_queue_roots(from: ChainId, to: ChainId) -> [Root] {
 
 ## Authentication (6)
 
-The Authentication object allows participants lookup of a `Signature`, message-hash and nonce into an `AccountID` (`H160` for now). It allows a transaction to be `authenticate`d, which mutates the state and ensures the same transactions cannot be resubmitted. It also allows a transaction to be `validate`d, which does not mutate the state (and thus does not give any replay protection except against transactions that have previously been `authenticate`d). You can also get the `order` index (aka `nonce` in Ethereum) for any account ID.
+Объект аутентификации позволяет участникам искать подпись, хэш сообщения и nonce в AccountID (H160 на данный момент). Это позволяет аутентифицировать транзакцию, которая изменяет состояние и гарантирует, что те же транзакции не могут быть повторно отправлены. Он также позволяет проверить транзакцию, которая не изменяет состояние (и, таким образом, не дает никакой защиты от воспроизведения, за исключением транзакций, которые ранее были аутентифицированы). Вы также можете получить индекс заказа (он же nonce в Ethereum) для любого идентификатора учетной записи.
 
-- READONLY `validate(self, tx: Transaction) -> (id: AccountID, now: TxOrder, when: TxOrder)` returns the account `id` that signed `tx`, and the ordering of this transaction `when` versus the current order `now`. If `now == when`, then the transaction may be validly included/executed. If the signature is invalid, will abort.
-- SYSTEM `authenticate(mut self, tx: Transaction) -> AccountID` returns the account ID that signed `tx` iff the `tx` may be validly executed on the state as it is. Aborts otherwise.
-- READONLY `order(self, id: AccountID) -> U64` returns the current order index of account `id`.
+    Только для чтения проверки(самовыдвижение, Техас: транзакция) -> (код: методами accountid, сейчас: TxOrder, когда: TxOrder) возвращает идентификатор записи, которая подписана Техас, и заказ такой сделке при сравнении текущего заказа сейчас. Если now == when, то сделка может быть действительно включена / выполнена. Если подпись недействительна, будет прервана.
+    Система authenticate (mut self, tx: Transaction) -> AccountID возвращает идентификатор счета, который подписал tx iff, tx может быть действительно выполнен на состоянии, как это. Прерывает иначе.
+    Readonly order (self, id: AccountID) - > u64 возвращает индекс текущего заказа идентификатора счета.
 
-The `authenticate` function will likely just call on the `validate` function. Example implementation:
+Функция authenticate, скорее всего, просто вызовет функцию validate. Пример реализации:
 
 ```
 fn authenticate(mut self, tx: Transaction) -> AccountID {
@@ -551,7 +555,8 @@ fn authenticate(mut self, tx: Transaction) -> AccountID {
 }
 ```
 
-The `validate` function will check the validity of an ECDSA signature `(r, s, v)`. This should be a signature on the Keccak256 hash of the RLP encoding of:
+Функция validate проверяет действительность подписи ECDSA (r, s, v). Это должна быть подпись на хэше keccak256 кодировки RLP:
+
 
 ```
 [
@@ -560,14 +565,13 @@ The `validate` function will check the validity of an ECDSA signature `(r, s, v)
 ]
 ```
 
-The `v` value of the signature should be based on the standard `v_standard` (`[27, 28]`):
+Значение V подписи должно быть основано на стандартном v_standard ([27, 28]):
 
 ```
 v := v_standard - 26 + chain_id * 2
 ```
 
+### Q&A
 
+    Как ожидается, что сборы будут синхронизированы с итогами баланса цепи? Существует три случаев, когда оплачиваются действия пользователей: вести непосредственно с разбивки объекта, заключение сделок непосредственно с Parachains объекта и выдачу некоторых parachain систем обучения (например, чтобы загрузить баланс в Parachains объекта или отправлять сообщения в другой parachain). Первые два списана со счета пользователя напрямую (очень рано) часть исполнения сделки. Последнее относится непосредственно на баланс parachain по. Предполагается, что parachain состояние-функция переходов (СТП) обеспечивать, где это необходимо пользователю достаточно заряжен комиссии от parachain-баланс точек; в случае отправки сообщений, это будет выглядеть как необходимо сжечь ДОТ жетоны для parachain выдавать исходящего сообщения в свой выходной очереди. В случае загрузки точек, это, вероятно, будет простое сокращение количества точек, которое появляется в upload_balances по сравнению с теми, которые сгорели на самом парашюте (которые, если бы не сборы, были бы равны).
 
-#### Q&A
-
-- *How are fee-charges expected to be kept in sync with chain balance totals?* There are three instances where fees are charged for user activities: Transacting directly with the Staking object, transacting directly with the Parachains object and issuing some parachain-based instruction (e.g. to upload a balance into the Parachains object or to send a message into another parachain). The first two are charged from the user's balance directly as (a very early) part of the execution of the transaction. The latter is charged directly to the parachain's balance. It is assumed that the parachain's state-transition function (STF) ensure that where necessary the user is adequately charged a fee from its parachain-local balance of DOTs; in the case of sending messages, this will appear as a necessary burn of DOT tokens for the parachain to issue an outgoing message into its egress queue. In the case of uploading DOTs, it will likely be a simple reduction in the amount of DOTs that appears in `upload_balances` compared to those burned on the parachain itself (which, were there no fees, would be equal).
